@@ -82,6 +82,22 @@ real files on disk. `DEMO.md` says so next to the run instructions.
 500 kB. Acceptable for a local-first tool; if it ever matters, the first lever is route-level
 code splitting, which the single-bundle Vite config does not do today.
 
+### P2 — Opening a file empties the folder panel, and its "parent" breadcrumb does nothing
+`src/web/pages/Files.tsx` sets the page's `path` to the file you open, so the listing panel below it
+renders no entries, and the `← parent` link is built from that same file path while the address bar
+still points at the folder — clicking it re-navigates to the page you are already on and issues no
+request. *Workaround:* the top-nav **Files** link re-lists the workspace root, and the folder is one
+click from there. Fixed behaviour would be to put the open file in the URL so the breadcrumb always
+navigates, or to compute the parent from the open listing's folder.
+
+### P2 — The seeded workspace README describes the server's storage, not the demo's
+The `README.md` seeded into the workspace says "Everything here is plain files on disk … nothing is
+stored in a database". That is true of the server build and false of the static demo, whose
+workspace lives in memory and is re-seeded on every load. *Workaround:* read it as a description of
+the product rather than of the tab in front of you; `DEMO.md` and the entry above state the demo's
+behaviour. A single wording that is true of both kernels — or a demo-only variant of the file — is
+the fix.
+
 ### P2 — Files are text
 The workspace API reads and writes UTF-8 text. Binary upload/download is not implemented; a
 binary file dropped into `HARNESS_HOME/workspace` will list and fail to read cleanly.
