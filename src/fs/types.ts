@@ -3,7 +3,7 @@
  *  that only need the contract can be bundled for the browser. */
 
 export class FsError extends Error {
-  constructor(public code: "escape" | "not_found" | "too_large", message: string) {
+  constructor(public code: "escape" | "not_found" | "too_large" | "invalid", message: string) {
     super(message);
   }
 }

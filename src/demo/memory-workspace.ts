@@ -54,6 +54,13 @@ export class MemoryWorkspace implements WorkspaceLike {
     const key = normalizePath(p);
     if (key === ".") throw new FsError("escape", "cannot write the workspace root");
     if (byteLength(content) > MAX_BYTES) throw new FsError("too_large", `content exceeds ${MAX_BYTES} bytes`);
+    // Same rule as the disk workspace: a file cannot be a folder. Without it the demo
+    // accepts `README.md/probe.md` and writes a row no listing or URL can reach.
+    const parts = key.split("/");
+    for (let i = 1; i < parts.length; i++) {
+      const ancestor = parts.slice(0, i).join("/");
+      if (this.files.has(ancestor)) throw new FsError("invalid", `parent of ${p} is a file, not a folder`);
+    }
     this.files.set(key, content);
   }
 

@@ -100,7 +100,7 @@ export function FilesView({
               {creating ? "Creating…" : "Create"}
             </button>
           </div>
-          <p className="muted small">Saved under the current folder: {path === "." ? "workspace root" : path}</p>
+          <p className="muted small">Saved under {createFolderLabel(path, listing)}</p>
         </form>
       ) : null}
 
@@ -203,6 +203,23 @@ export function pathFromSearch(params: { get: (k: string) => string | null }): s
   return raw && raw.trim() !== "" ? raw : ".";
 }
 
+/** Where a new file lands. With a file open the base is that file's folder: a file's own
+ *  path is not a directory, so `README.md` open must yield the workspace root and not
+ *  `README.md/`. The dialog's copy and the request both read this, so they cannot disagree. */
+export function createBase(path: string, listing: Listing | null): string {
+  const current = listing?.path || path || ".";
+  const isFile = listing?.type === "file";
+  const dir = isFile ? (current.includes("/") ? current.slice(0, current.lastIndexOf("/")) : ".") : current;
+  if (!dir || dir === "." || dir === "/") return "";
+  return `${dir.replace(/\/+$/, "")}/`;
+}
+
+/** The human name of that folder, used in the New-file dialog. */
+export function createFolderLabel(path: string, listing: Listing | null): string {
+  const base = createBase(path, listing);
+  return base === "" ? "the workspace root" : base.replace(/\/$/, "");
+}
+
 export function FilesPage() {
   const api = useApi();
   const [path, setPath] = useState(".");
@@ -273,8 +290,7 @@ export function FilesPage() {
     if (!target) return;
     setCreating(true);
     setNotice(null);
-    const dir = path === "." || path === "" || path === "/" ? "" : `${path.replace(/\/+$/, "")}/`;
-    const full = `${dir}${target}`;
+    const full = `${createBase(path, listing)}${target}`;
     try {
       await api.writeFile(full, "");
       setNotice(`Created ${full}`);

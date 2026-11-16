@@ -172,3 +172,17 @@ describe("settings API", () => {
     } finally { b.done(); }
   });
 });
+
+describe("files API — a bad destination is the caller's error", () => {
+  test("a destination whose parent is a file is a 400 naming the path, not a 500", async () => {
+    const b = build();
+    try {
+      expect((await call(b.app, "PUT", "/api/files?path=README.md", { content: "hi" })).status).toBe(200);
+      const res = await call(b.app, "PUT", `/api/files?path=${encodeURIComponent("README.md/probe.md")}`, { content: "" });
+      const body = await res.json();
+      expect(res.status).toBe(400);
+      expect(body.error.code).toBe("bad_request");
+      expect(body.error.message).toContain("README.md/probe.md");
+    } finally { b.done(); }
+  });
+});

@@ -28,3 +28,11 @@ test("not found and size limits", () => {
 });
 test("cannot delete root", () => expect(() => ws.delete(".")).toThrow(/root/));
 test("search finds lines", () => { ws.write("d/n.txt", "one\nneedle here"); ws.write("m.txt", "needle"); const r = ws.search("needle"); expect(r.length).toBe(2); expect(ws.search("needle", 1).length).toBe(1); });
+
+test("a path whose parent is a file is an invalid-path error, not a raw ENOTDIR", () => {
+  ws.write("file.md", "x");
+  let caught: unknown = null;
+  try { ws.write("file.md/child.md", "y"); } catch (e) { caught = e; }
+  expect(caught).toBeInstanceOf(FsError);
+  expect((caught as InstanceType<typeof FsError>).code).toBe("invalid");
+});

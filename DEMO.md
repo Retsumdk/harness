@@ -48,6 +48,10 @@ it runs from a sub-path such as `https://<user>.github.io/<repo>/`. Only the
 process, and the demo deliberately has none. Everything else behaves as it does
 on the server: chat streams, tools read the seeded files, agents run step by step,
 plugins enable and disable.
+One difference is deliberate and worth knowing before you click: **files do not survive a reload.**
+Conversations, runs, agents and settings are kept in the browser's `localStorage`, but the workspace
+is re-seeded from sample data on every page load, so a file you create or edit in the demo is gone
+after F5. The server build above keeps real files on disk.
 
 ## Same thing over HTTP
 

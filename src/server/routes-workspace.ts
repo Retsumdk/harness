@@ -24,7 +24,7 @@ export interface SettingsView {
 
 const err = (code: string, message: string) => ({ error: { code, message } });
 
-const FS_STATUS: Record<FsError["code"], number> = { escape: 400, not_found: 404, too_large: 413 };
+const FS_STATUS: Record<FsError["code"], number> = { escape: 400, not_found: 404, too_large: 413, invalid: 400 };
 
 /** UTF-8 byte length without reaching for `Buffer`: these routes also run in a
  *  browser tab (the static demo), where `Buffer` is not defined. */

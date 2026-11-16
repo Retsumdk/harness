@@ -245,3 +245,16 @@ describe("demo kernel — no Node-only globals in the modules the tab ships", ()
     expect(offenders).toEqual([]);
   });
 });
+
+describe("demo kernel — a destination under a file is refused, not stored", () => {
+  test("creating a file under an existing file is a 400 in the tab, like the server", async () => {
+    const kernel = await createDemoKernel({ storage: fakeStorage(), tokenDelayMs: 0 });
+    const res = await call(kernel, `/api/files?path=${encodeURIComponent("README.md/probe.md")}`, {
+      method: "PUT",
+      body: JSON.stringify({ content: "" }),
+    });
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe("bad_request");
+    expect(kernel.workspace.paths()).toEqual(["README.md", "data/releases.csv", "notes/onboarding.md"]);
+  });
+});

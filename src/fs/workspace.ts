@@ -34,8 +34,22 @@ export class Workspace implements WorkspaceLike {
   write(p: string, content: string): void {
     if (Buffer.byteLength(content) > this.maxBytes) throw new FsError("too_large", `content exceeds ${this.maxBytes} bytes`);
     const abs = this.resolve(p);
-    mkdirSync(dirname(abs), { recursive: true });
-    writeFileSync(abs, content);
+    const parent = dirname(abs);
+    // A file where a folder should be is the caller's mistake, not a crash: `README.md/x`
+    // used to escape this method as a raw ENOTDIR and reach the client as 500 "internal".
+    if (existsSync(parent) && !statSync(parent).isDirectory()) {
+      throw new FsError("invalid", `parent of ${p} is a file, not a folder`);
+    }
+    try {
+      mkdirSync(parent, { recursive: true });
+      writeFileSync(abs, content);
+    } catch (e) {
+      const code = (e as { code?: string }).code;
+      if (code === "ENOTDIR" || code === "EISDIR" || code === "ENOENT") {
+        throw new FsError("invalid", `cannot write ${p}: a parent of that path is not a folder`);
+      }
+      throw e;
+    }
   }
 
   /** Kind and size of a path, used by the file browser to pick a panel. */

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { renderToStaticMarkup } from "react-dom/server";
 import { ChatView } from "../src/web/pages/Chat";
-import { FilesView, pathFromSearch } from "../src/web/pages/Files";
+import { FilesView, createBase, createFolderLabel, pathFromSearch } from "../src/web/pages/Files";
 import { AgentsView } from "../src/web/pages/Agents";
 import { RunView } from "../src/web/pages/Runs";
 import { PluginsView } from "../src/web/pages/Plugins";
@@ -142,6 +142,24 @@ describe("web views — files", () => {
   test("a `/files?path=` URL opens that folder, not the root", () => {
     expect(pathFromSearch(new URLSearchParams("?path=notes/2026"))).toBe("notes/2026");
     expect(pathFromSearch(new URLSearchParams("?path=%2E%2E"))).toBe("..");
+  });
+
+  test("creating a file while a file is open targets that file's folder, not the file", () => {
+    // QA round 2, P1: the dialog used the open file's own path as the base, so with
+    // README.md open the request was `PUT /api/files?path=README.md/probe.md` -> 500.
+    const nested = { type: "file" as const, path: "data/notes/qa.md", content: "", size: 0 };
+    expect(createBase("data/notes/qa.md", nested)).toBe("data/notes/");
+    expect(createFolderLabel("data/notes/qa.md", nested)).toBe("data/notes");
+    const atRoot = { type: "file" as const, path: "README.md", content: "", size: 0 };
+    expect(createBase("README.md", atRoot)).toBe("");
+    expect(createFolderLabel("README.md", atRoot)).toBe("the workspace root");
+  });
+
+  test("a directory is its own base, so create lands in the folder the page says", () => {
+    const dir = { type: "dir" as const, path: "data/notes", entries: [] };
+    expect(createBase("data/notes", dir)).toBe("data/notes/");
+    expect(createFolderLabel("data/notes", dir)).toBe("data/notes");
+    expect(createBase(".", null)).toBe("");
   });
 
   test("no path in the URL starts at the workspace root", () => {

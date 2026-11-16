@@ -5,8 +5,8 @@ is listed only if someone could hit it. Severity uses the usual scale: **P0** da
 bypass or crash on the documented happy path; **P1** a brief requirement missing or broken;
 **P2** a limitation a reasonable operator can live with, given the workaround.
 
-**Open P0: none. Open P1: none.** The two P1s QA found in round 1 are fixed in this build
-(see *Fixed since round 1* below). The P2s below ship.
+**Open P0: none. Open P1: none.** The two P1s QA found in round 1 and the one it found in round 2
+are fixed in this build (see *Fixed since round 1* and *Fixed since round 2* below). The P2s below ship.
 
 ---
 
@@ -68,7 +68,14 @@ runtime is deliberately absent: it would mean executing unreviewed code inside t
 ### P2 — The static demo is the mock provider only
 The hosted demo runs the real routes in the tab with the deterministic mock provider and no
 `shell.run` (there is no process to run it in). It demonstrates behaviour, not model quality.
-The server build is the product.
+
+### P2 — the hosted demo keeps conversations but forgets files on reload
+The in-tab kernel re-seeds its workspace on every page load (`writeSeedFiles` in
+`src/demo/kernel.ts`), so a file a visitor creates or saves is gone after F5, while conversations,
+runs, agents and settings persist in `localStorage`. This is a demonstration, not a store, but a
+visitor who edits a file and reloads will reasonably think the save failed.
+*Workaround:* treat the demo's workspace as sample data; the server build (`bun run start`) keeps
+real files on disk. `DEMO.md` says so next to the run instructions.
 
 ### P2 — The client bundle has no minification-tuned budget
 `bun run build:web` produces a ~272 kB JavaScript bundle (React + the app) and warns above

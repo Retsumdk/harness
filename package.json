@@ -15,7 +15,8 @@
     "build:demo": "vite build --config vite.demo.config.ts && bash scripts/finalize-demo.sh",
     "cli": "bun run src/cli/main.ts",
     "perf": "bun run scripts/perf-check.ts",
-    "check": "bunx tsc --noEmit && bun test && bun run build:web && bun run build:demo && bun run smoke && bun run perf"
+    "check": "bunx tsc --noEmit && bun test && bun run build:web && bun run build:demo && bun run smoke && bun run e2e && bun run perf",
+    "e2e": "bun run scripts/e2e.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
