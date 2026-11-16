@@ -96,8 +96,8 @@ by the final review round are worth knowing up front:
 - The public demo was driven in a browser from a cold load: home counts, a chat with a live tool
   call, a file save, an agent run reaching `succeeded`, a deep link to `/files`, and the 404
   route — no console errors.
-- `bash JOB/bin/verify-delivery.sh JOB-MWE35OL3-ZH8TJ` → `RESULT: PASS` (private repo, clean
-  clone, install, build, tests, live demo 200 with no error page).
+- An end-to-end acceptance check on the delivery itself: the repo is private, a cold clone
+  installs and builds, the suite is green, and the live demo answers with no error page.
 
 ## Reporting a bug
 
