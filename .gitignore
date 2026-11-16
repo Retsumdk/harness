@@ -1,0 +1,11 @@
+node_modules
+*.db
+.env
+.harness/
+/dist/
+/demo/
+
+# internal job artifacts — never shipped in the client repo
+brief.md
+STATE.json
+REVIEW.md

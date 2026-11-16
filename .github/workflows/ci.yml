@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: typecheck, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Every source file is in the commit
+        run: bash bin/commit-check.sh
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Tests with coverage
+        run: bun run coverage
+
+      - name: Build the web client
+        run: bun run build:web
+
+      - name: Build the static demo
+        run: bun run build:demo
+
+      - name: Smoke the real server
+        run: bun run smoke
+
+      - name: Performance gate
+        run: bun run perf
