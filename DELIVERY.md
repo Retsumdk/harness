@@ -60,7 +60,7 @@ verification recorded for each:
 | R5 | A modular environment | Seven capability modules with declared dependency edges, individually startable and stoppable from Plugins → Capability modules; `docs/EXTENDING.md` documents the extension contract. |
 | R6 | Spawn functional AI agents | Agent definitions with a tool allowlist and step/token budgets; runs stream live, record each step with its tool call and result, and are replayable from `/runs/<id>`. |
 | R7 | Swift and efficient | `bun run perf` — cold start ~50 ms, 100 concurrent chats with 0 failures, ~+16 MB RSS, 100 conversations persisted. |
-| R8 | Thorough, complete, refined | 268 tests / 0 failures across 25 files, 83.3 % function / 87.5 % line coverage, a smoke run, a perf run and an 18-check e2e pass, plus hand-written empty, loading and error states on every panel. |
+| R8 | Thorough, complete, refined | 269 tests / 0 failures across 25 files, 83.3 % function / 87.5 % line coverage, a smoke run, a perf run and an 18-check e2e pass, plus hand-written empty, loading and error states on every panel. |
 
 ## What is deliberately excluded
 
