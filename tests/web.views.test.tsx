@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { renderToStaticMarkup } from "react-dom/server";
 import { ChatView } from "../src/web/pages/Chat";
-import { FilesView, createBase, createFolderLabel, pathFromSearch } from "../src/web/pages/Files";
+import { FilesView, createBase, createFolderLabel, filesHref, pathFromSearch } from "../src/web/pages/Files";
 import { AgentsView } from "../src/web/pages/Agents";
 import { RunView } from "../src/web/pages/Runs";
 import { PluginsView } from "../src/web/pages/Plugins";
@@ -142,6 +142,25 @@ describe("web views — files", () => {
   test("a `/files?path=` URL opens that folder, not the root", () => {
     expect(pathFromSearch(new URLSearchParams("?path=notes/2026"))).toBe("notes/2026");
     expect(pathFromSearch(new URLSearchParams("?path=%2E%2E"))).toBe("..");
+  });
+  test("whatever is open goes into the URL, file or folder", () => {
+    // QA round 3, P2 (O-6): an open file lived only in local state, so the panel's parent
+    // link pointed at the URL already on screen and clicking it did nothing.
+    expect(filesHref("data/releases.csv")).toBe("/files?path=data%2Freleases.csv");
+    expect(filesHref("notes")).toBe("/files?path=notes");
+    expect(filesHref(".")).toBe("/files?path=.");
+    expect(filesHref("")).toBe("/files?path=.");
+  });
+
+  test("with a file open the parent link targets its folder, so clicking it loads something new", () => {
+    const open = { type: "file" as const, path: "data/releases.csv", content: "id\n", size: 3 };
+    const out = html(<FilesView {...filesProps} path="data/releases.csv" listing={open} draft="id\n" />);
+    expect(out).toContain('href="/files?path=data"');
+    expect(out).not.toContain(`href="${filesHref("data/releases.csv")}"`);
+
+    const atRoot = html(<FilesView {...filesProps} path="README.md" listing={{ type: "file", path: "README.md", content: "hi\n", size: 3 }} draft="hi\n" />);
+    expect(atRoot).toContain('href="/files?path=."');
+    expect(atRoot).toContain("workspace root");
   });
 
   test("creating a file while a file is open targets that file's folder, not the file", () => {

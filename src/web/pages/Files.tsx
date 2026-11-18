@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { EmptyState, ErrorBanner, Loading, formatBytes } from "../components";
 import { describeError } from "../api";
 import { useApi } from "../api-context";
-import { Link, useSearchParams } from "../router";
+import { Link, useRouter, useSearchParams } from "../router";
 
 export interface DirEntry { name: string; kind: string; path: string; size?: number }
 export interface DirListing { type: "dir"; path: string; entries: DirEntry[] }
@@ -203,6 +203,15 @@ export function pathFromSearch(params: { get: (k: string) => string | null }): s
   return raw && raw.trim() !== "" ? raw : ".";
 }
 
+/** The Files URL for a path — folder or file. Whatever is open lives in the URL, so the
+ *  panel's breadcrumb always targets a different path than the one loaded (a file's own
+ *  path only in local state would leave the parent link pointing at the page on screen)
+ *  and a reload or a pasted link reopens the same file instead of the workspace root. */
+export function filesHref(target: string): string {
+  const clean = target && target.trim() !== "" ? target : ".";
+  return `/files?path=${encodeURIComponent(clean)}`;
+}
+
 /** Where a new file lands. With a file open the base is that file's folder: a file's own
  *  path is not a directory, so `README.md` open must yield the workspace root and not
  *  `README.md/`. The dialog's copy and the request both read this, so they cannot disagree. */
@@ -222,6 +231,7 @@ export function createFolderLabel(path: string, listing: Listing | null): string
 
 export function FilesPage() {
   const api = useApi();
+  const { navigate: go } = useRouter();
   const [path, setPath] = useState(".");
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
@@ -255,8 +265,16 @@ export function FilesPage() {
   // and a deep link all land where they say they will instead of falling back to the root.
   useEffect(() => { void load(requested); }, [load, requested]);
 
-  const openFile = (target: string) => { setSearchResults(null); void load(target); };
-  const openDir = (target: string) => { setSearchResults(null); void load(target); };
+  // One way in: put the target in the URL and let the effect above load it. Clicking the
+  // item already in the URL re-reads it instead of pushing a duplicate history entry.
+  const show = (target: string) => {
+    setSearchResults(null);
+    if (target === requested) { void load(target); return; }
+    go(filesHref(target));
+  };
+
+  const openFile = (target: string) => show(target);
+  const openDir = (target: string) => show(target);
 
   const save = async () => {
     if (listing?.type !== "file") return;
@@ -279,7 +297,7 @@ export function FilesPage() {
     try {
       await api.deleteFile(target);
       setNotice(`Deleted ${target}`);
-      await load(".");
+      show(".");
     } catch (e) {
       setError(describeError(e));
     }
@@ -294,7 +312,7 @@ export function FilesPage() {
     try {
       await api.writeFile(full, "");
       setNotice(`Created ${full}`);
-      await load(full);
+      show(full);
     } catch (e) {
       setError(describeError(e));
     } finally {
