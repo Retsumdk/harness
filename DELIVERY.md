@@ -60,7 +60,7 @@ verification recorded for each:
 | R5 | A modular environment | Seven capability modules with declared dependency edges, individually startable and stoppable from Plugins → Capability modules; `docs/EXTENDING.md` documents the extension contract. |
 | R6 | Spawn functional AI agents | Agent definitions with a tool allowlist and step/token budgets; runs stream live, record each step with its tool call and result, and are replayable from `/runs/<id>`. |
 | R7 | Swift and efficient | `bun run perf` — cold start ~50 ms, 100 concurrent chats with 0 failures, ~+16 MB RSS, 100 conversations persisted. |
-| R8 | Thorough, complete, refined | 266 tests / 0 failures across 25 files, 83.3 % function / 87.5 % line coverage, a smoke run, a perf run and an 18-check e2e pass, plus hand-written empty, loading and error states on every panel. |
+| R8 | Thorough, complete, refined | 268 tests / 0 failures across 25 files, 83.3 % function / 87.5 % line coverage, a smoke run, a perf run and an 18-check e2e pass, plus hand-written empty, loading and error states on every panel. |
 
 ## What is deliberately excluded
 
@@ -78,18 +78,19 @@ Decided while building, stated here rather than left to be found:
 
 ## Known limitations you are shipping with
 
-`KNOWN-DEFECTS.md` in the repo is the full list: 15 P2 entries, no P0 and no P1. The two added
-by the final review round are worth knowing up front:
+`KNOWN-DEFECTS.md` in the repo is the full list: 14 open P2 entries, no P0 and no P1. The two the
+final review round raised are worth knowing up front — the first has since been fixed:
 
-- Opening a file leaves the folder panel empty, and the "← parent" breadcrumb does nothing
-  until you use the **Files** link in the nav. Workaround: use the nav link to get back to the root.
+- The Files "← parent" breadcrumb used to re-open the page you were already on, so it did nothing;
+  the open file now lives in the URL and the link returns its folder (fixed 2026-11-18). The panel
+  beside an open file still lists no entries, by design.
 - The seeded workspace `README.md` describes storage as "plain files on disk", which is true of
-  your own server and not of the public demo's in-memory workspace.
+  your own server and not of the public demo's in-memory workspace (still open).
 
 ## How this was verified
 
 - Clean clone of the repo: `bun install --frozen-lockfile` → `bunx tsc --noEmit` →
-  `bun test --coverage` (266 pass, 0 fail) → `bun run build:web` → `bun run build:demo` →
+  `bun test --coverage` (268 pass, 0 fail) → `bun run build:web` → `bun run build:demo` →
   `bun run smoke` → `bun run e2e` → `bun run perf`. All green, twice: once by the engineer and
   once by the independent reviewer.
 - CI (GitHub Actions) green on the pushed commit.

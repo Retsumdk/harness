@@ -82,13 +82,14 @@ real files on disk. `DEMO.md` says so next to the run instructions.
 500 kB. Acceptable for a local-first tool; if it ever matters, the first lever is route-level
 code splitting, which the single-bundle Vite config does not do today.
 
-### P2 — Opening a file empties the folder panel, and its "parent" breadcrumb does nothing
-`src/web/pages/Files.tsx` sets the page's `path` to the file you open, so the listing panel below it
-renders no entries, and the `← parent` link is built from that same file path while the address bar
-still points at the folder — clicking it re-navigates to the page you are already on and issues no
-request. *Workaround:* the top-nav **Files** link re-lists the workspace root, and the folder is one
-click from there. Fixed behaviour would be to put the open file in the URL so the breadcrumb always
-navigates, or to compute the parent from the open listing's folder.
+### P2 (fixed 2026-11-18) — Opening a file emptied the folder panel, and its "parent" breadcrumb did nothing
+`src/web/pages/Files.tsx` used to keep the open file in local state while the address bar still
+pointed at the folder, so the `← parent` link re-navigated to the page already on screen and issued
+no request. The open item now lives in the URL (`filesHref` → `/files?path=<file>`), so the
+breadcrumb always targets a different path than the one loaded, a reload or a pasted link reopens
+the same file, and `← parent` returns the folder listing. The listing panel beside an open file is
+still empty by design — the preview occupies that side. Covered by two tests in
+`tests/web.views.test.tsx`.
 
 ### P2 — The seeded workspace README describes the server's storage, not the demo's
 The `README.md` seeded into the workspace says "Everything here is plain files on disk … nothing is
