@@ -91,13 +91,14 @@ the same file, and `← parent` returns the folder listing. The listing panel be
 still empty by design — the preview occupies that side. Covered by two tests in
 `tests/web.views.test.tsx`.
 
-### P2 — The seeded workspace README describes the server's storage, not the demo's
-The `README.md` seeded into the workspace says "Everything here is plain files on disk … nothing is
-stored in a database". That is true of the server build and false of the static demo, whose
-workspace lives in memory and is re-seeded on every load. *Workaround:* read it as a description of
-the product rather than of the tab in front of you; `DEMO.md` and the entry above state the demo's
-behaviour. A single wording that is true of both kernels — or a demo-only variant of the file — is
-the fix.
+### P2 — The seeded workspace README describes both storage modes (fixed 2026-11-18)
+The `README.md` seeded into the workspace used to say "Everything here is plain files on disk … nothing
+is stored in a database", which was true of the server build and false of the static demo, whose
+workspace lives in memory and is re-seeded on every load. The seed copy now says the workspace is
+plain files with no database behind it, and names both placements: a directory on disk on a server
+install, held in the tab and re-seeded on every load in the browser demo, so a saved demo file does
+not survive a refresh. Covered by a test in `tests/seed.test.ts` that asserts the seeded README
+carries both statements.
 
 ### P2 — Files are text
 The workspace API reads and writes UTF-8 text. Binary upload/download is not implemented; a

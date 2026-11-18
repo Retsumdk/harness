@@ -78,19 +78,20 @@ Decided while building, stated here rather than left to be found:
 
 ## Known limitations you are shipping with
 
-`KNOWN-DEFECTS.md` in the repo is the full list: 14 open P2 entries, no P0 and no P1. The two the
-final review round raised are worth knowing up front — the first has since been fixed:
+`KNOWN-DEFECTS.md` in the repo is the full list: 13 open P2 entries, no P0 and no P1. The two the
+final review round raised are worth knowing up front — both have since been fixed:
 
 - The Files "← parent" breadcrumb used to re-open the page you were already on, so it did nothing;
   the open file now lives in the URL and the link returns its folder (fixed 2026-11-18). The panel
   beside an open file still lists no entries, by design.
-- The seeded workspace `README.md` describes storage as "plain files on disk", which is true of
-  your own server and not of the public demo's in-memory workspace (still open).
+- The seeded workspace `README.md` used to describe every file as "on disk", which was false in the
+  public demo's in-memory workspace; it now names both storage modes and says a file saved in the
+  demo does not survive a refresh (fixed 2026-11-18).
 
 ## How this was verified
 
 - Clean clone of the repo: `bun install --frozen-lockfile` → `bunx tsc --noEmit` →
-  `bun test --coverage` (268 pass, 0 fail) → `bun run build:web` → `bun run build:demo` →
+  `bun test --coverage` (269 pass, 0 fail) → `bun run build:web` → `bun run build:demo` →
   `bun run smoke` → `bun run e2e` → `bun run perf`. All green, twice: once by the engineer and
   once by the independent reviewer.
 - CI (GitHub Actions) green on the pushed commit.
