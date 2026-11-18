@@ -28,8 +28,10 @@ This directory is the file system the agents and the chat tool loop can read and
 - \`data/\` — small datasets you want an agent to reason over
 - \`releases.csv\` — sample release log used by the release-note agent
 
-Everything here is plain files on disk. The Files tab in the UI is a view of this
-directory; nothing is stored in a database.
+Everything here is a plain file, and nothing sits in a database: the Files tab in the UI
+is a view of this workspace. Where that workspace lives depends on the build — on a server
+install it is a directory on disk; in the browser demo it is held in the tab and re-seeded
+when the page loads, so a file saved there does not survive a refresh.
 `;
 
 const ONBOARDING = `# Onboarding

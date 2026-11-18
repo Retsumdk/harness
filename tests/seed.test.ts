@@ -62,6 +62,18 @@ describe("first-run seed", () => {
     } finally { b.done(); }
   });
 
+  test("the seeded README is true in both builds, not only the on-disk one", async () => {
+    const b = build();
+    try {
+      await seedIfNeeded({ store: b.store, workspace: b.workspace, agents: b.agents });
+      const readme = b.workspace.read("README.md");
+      expect(readme).not.toContain("plain files on disk");
+      expect(readme).toContain("on disk");
+      expect(readme).toContain("browser demo");
+      expect(readme).toContain("re-seeded");
+    } finally { b.done(); }
+  });
+
   test("a store that already holds data is left alone, not overwritten", async () => {
     const b = build();
     try {
