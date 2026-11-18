@@ -7,7 +7,7 @@
 
 | | |
 |---|---|
-| **Source (private, yours)** | https://github.com/Retsumdk/harness — visibility `PRIVATE` |
+| **Source (public)** | https://github.com/Retsumdk/harness — visibility `PUBLIC` |
 | **Live demo (public, no sign-up)** | https://retsumdk.github.io/harness-demo/ |
 
 The demo is the real client bundle, built from the same commit as the repo. It runs against
@@ -17,7 +17,7 @@ page), and files you create there are gone after a reload — conversations and 
 
 ## Run it yourself — three commands
 
-From a clean clone of the private repo, with Bun 1.1+ installed and nothing else:
+From a clean clone of the repo, with Bun 1.1+ installed and nothing else:
 
 ```bash
 bun install
@@ -88,7 +88,7 @@ by the final review round are worth knowing up front:
 
 ## How this was verified
 
-- Clean clone of the private repo: `bun install --frozen-lockfile` → `bunx tsc --noEmit` →
+- Clean clone of the repo: `bun install --frozen-lockfile` → `bunx tsc --noEmit` →
   `bun test --coverage` (266 pass, 0 fail) → `bun run build:web` → `bun run build:demo` →
   `bun run smoke` → `bun run e2e` → `bun run perf`. All green, twice: once by the engineer and
   once by the independent reviewer.
@@ -96,7 +96,7 @@ by the final review round are worth knowing up front:
 - The public demo was driven in a browser from a cold load: home counts, a chat with a live tool
   call, a file save, an agent run reaching `succeeded`, a deep link to `/files`, and the 404
   route — no console errors.
-- An end-to-end acceptance check on the delivery itself: the repo is private, a cold clone
+- An end-to-end acceptance check on the delivery itself: the repo is public as declared, a cold clone
   installs and builds, the suite is green, and the live demo answers with no error page.
 
 ## Reporting a bug
