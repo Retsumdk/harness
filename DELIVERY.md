@@ -87,7 +87,8 @@ limitation you can work around rather than a broken requirement:
   beside an open file still lists no entries, by design.
 - The seeded workspace `README.md` used to describe every file as "on disk", which was false in the
   public demo's in-memory workspace; it now names both storage modes and says a file saved in the
-  demo does not survive a refresh (fixed 2026-11-18).- Still open: **pressing Stop mid-reply saves the partial text as a finished assistant message**,
+  demo does not survive a refresh (fixed 2026-11-18).
+- Still open: **pressing Stop mid-reply saves the partial text as a finished assistant message**,
   with no marker that it was interrupted, so a stopped answer can look complete. It is listed in
   `KNOWN-DEFECTS.md` with its workaround — edit or delete a reply you stopped rather than reading it
   as final. The brief does not describe Stop, and this delivery is frozen at the commit QA reviewed,
