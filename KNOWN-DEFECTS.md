@@ -104,6 +104,18 @@ carries both statements.
 The workspace API reads and writes UTF-8 text. Binary upload/download is not implemented; a
 binary file dropped into `HARNESS_HOME/workspace` will list and fail to read cleanly.
 
+### P2 — A stopped reply is stored as if it had finished
+Pressing **Stop** while a reply is streaming aborts the stream, but the partial text is then saved
+as an ordinary completed assistant message with no `interrupted` marker: `MockProvider.stream`
+returns cleanly when the signal fires (`src/providers/mock.ts`, the `opts.signal?.aborted` return
+inside the token loop), so `ChatService.send` falls through to its normal `addMessage({ role:
+"assistant", … })` (`src/chat/service.ts`) with whatever text it had collected. Reproduced on the
+public demo: a 10,000-character send stopped after about 1.2 s left a 1,549-character answer that
+ended mid-sentence, indistinguishable from a complete one.
+*Workaround:* treat a reply you stopped as a draft — edit or delete it — and do not read it as the
+model's finished answer. Nothing is lost from the user's own message, which is stored before the
+stream opens.
+
 ---
 
 ## Fixed in this build (found by review round 1)

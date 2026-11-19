@@ -78,15 +78,20 @@ Decided while building, stated here rather than left to be found:
 
 ## Known limitations you are shipping with
 
-`KNOWN-DEFECTS.md` in the repo is the full list: 13 open P2 entries, no P0 and no P1. The two the
-final review round raised are worth knowing up front — both have since been fixed:
+`KNOWN-DEFECTS.md` in the repo is the full list: 14 open P2 entries, no P0 and no P1. Three of
+them came out of the final review round — two are fixed, and one ships open because it is a
+limitation you can work around rather than a broken requirement:
 
 - The Files "← parent" breadcrumb used to re-open the page you were already on, so it did nothing;
   the open file now lives in the URL and the link returns its folder (fixed 2026-11-18). The panel
   beside an open file still lists no entries, by design.
 - The seeded workspace `README.md` used to describe every file as "on disk", which was false in the
   public demo's in-memory workspace; it now names both storage modes and says a file saved in the
-  demo does not survive a refresh (fixed 2026-11-18).
+  demo does not survive a refresh (fixed 2026-11-18).- Still open: **pressing Stop mid-reply saves the partial text as a finished assistant message**,
+  with no marker that it was interrupted, so a stopped answer can look complete. It is listed in
+  `KNOWN-DEFECTS.md` with its workaround — edit or delete a reply you stopped rather than reading it
+  as final. The brief does not describe Stop, and this delivery is frozen at the commit QA reviewed,
+  so the entry documents the behaviour instead of changing it.
 
 ## How this was verified
 
